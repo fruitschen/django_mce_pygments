@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Pygments</title>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/tiny_mce/tiny_mce_popup.js"></script>
+    <script src="{{settings.MEDIA_URL}}js/jquery-1.4.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        tinyMCEPopup.requireLangPack();
+
+        var ExampleDialog = {
+            init : function() {
+                var f = document.forms[0];
+                // Get the selected contents as text and place it in the input
+                f.code.value = tinyMCEPopup.editor.selection.getContent({format : 'text'});
+            },
+
+        insert : function() {
+            // Insert the contents from the input into the document
+            $.post(".", { lang: $('#lang').val(),code: $('#code').val() }, function(data) {
+                $('#code').val(data);
+                tinyMCEPopup.editor.execCommand('mceInsertContent', false, document.forms[0].code.value);
+                tinyMCEPopup.close();      
+            });
+        }
+    };
+
+        tinyMCEPopup.onInit.add(ExampleDialog.init, ExampleDialog);
+
+    </script>
+</head>
+<body>
+
+    <form id="pygments_form" action="#">
+        <p><label>Language:</label></p>
+        <p>
+            <select id="lang" name="lang" type="text" class="text">
+                <option value="python">Python</option>
+                <option value="pycon">Python Console</option>
+                <option value="pytb">Python TraceBack</option>
+                <option value="html">HTML</option>
+                <option value="django">Django</option>
+                <option value="html+django">HTML+Django</option>
+                <option value="javascript">JavaScript</option>
+                <option value="css">CSS</option>
+            </select>
+        </p>
+        <p><label>Code:</label></p>
+        <p><textarea id="code" name="code" cols="80" rows="10"></textarea></p>
+        <p id="result"></p>
+        <div class="mceActionPanel">
+            <div style="float: left">
+                <input type="button" id="insert" name="insert" value="{#insert}" onclick="ExampleDialog.insert();" />
+            </div>
+
+            <div style="float: right">
+                <input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+            </div>
+        </div>
+    </form>
+
+</body>
+</html>
